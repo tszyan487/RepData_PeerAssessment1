@@ -8,18 +8,54 @@ output:
 
 ## Loading and preprocessing the data
 
-
+```{r}
+assignment <- read.csv("activity.csv")
+```
 
 ## What is mean total number of steps taken per day?
-
+```{r}
+q1 <- assignment %>% group_by(date) %>% summarise(total_steps = sum(steps))
+mean(q1$total_steps, na.rm = T)
+```
 
 
 ## What is the average daily activity pattern?
+```{r}
+q2 <- assignment %>% group_by(interval) %>% 
+                     mutate (average_steps = mean(steps, na.rm = T))
 
-
+q2$interval[mean(q2$average_steps)]
+```
 
 ## Imputing missing values
 
-
-
+```{r}
+assignment$steps[is.na(newset$steps)] <- 0
+```
 ## Are there differences in activity patterns between weekdays and weekends?
+```{r}
+
+q4 <- assignment
+q4$date <- as.Date.character(q4$date, "%Y-%m-%d")
+q4$day <- format(q4$date, "%A")
+q4$week <- as.factor(q4$week)
+weekend <- c("Saturday", "Sunday")
+
+for (i in 1:nrow(q4))
+{
+  if (format(q4$date[i], "%A") %in% weekend)
+  {
+    q4$week[i] <- "Weekend"
+  }
+  else
+  {
+    q4$week[i] <- "Weekday"
+  }
+}
+
+q4 <- q4 %>% group_by(interval,week) %>% mutate (average_steps = mean(steps , na.rm = T))
+
+library(lattice)
+xyplot(average_steps ~ interval | week, q4, type = "l", xlab= "Interval", ylab="Average Steps", layout = c(1,2))
+
+```
