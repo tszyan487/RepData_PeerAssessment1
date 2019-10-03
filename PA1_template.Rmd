@@ -1,97 +1,316 @@
+##############################################
 
-## Loading and preprocessing the data
+# Commit containing full submission
 
-```{r}
-assignment <- read.csv("activity.csv")
-```
+#
 
-## What is mean total number of steps taken per day?
-For this part of the assignment, you can ignore the missing values in the dataset.
+# Code for reading in the dataset and/or processing the data
 
-```{r}
-q1 <- assignment %>% group_by(date) %>% summarise(total_steps = sum(steps))
-```
+# 1. Histogram of the total number of steps taken each day
 
-Make a histogram of the total number of steps taken each day
+# 2. Mean and median number of steps taken each day
 
-```{r echo = T}
-ggplot(q1,aes(x=date))+geom_bar(aes(y=total_steps), stat = "identity")+labs(x = "Date", y="Total Steps")
-```
+# 3. Time series plot of the average number of steps taken
 
-Calculate and report the mean and median total number of steps taken per day
-```{recho = T}
-mean(q1$total_steps, na.rm = T)
-median(q1$total_steps, na.rm = T)
-```
+# 4. The 5-minute interval that, on average, contains the maximum number of steps
 
-## What is the average daily activity pattern?
-```{r echo = F}
-q2 <- assignment %>% group_by(interval) %>% 
-                     mutate (average_steps = mean(steps, na.rm = T))
-```
-1. Make a time sersies plot of the 5 minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+# 5. Code to describe and show a strategy for imputing missing data
 
-```{r echo = T}
-ggplot(q2,aes(x = interval, y = average_steps))+geom_line()+labs(x = "Interval", y="Average Steps")
-```
-2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+# 6. Histogram of the total number of steps taken each day after missing values are imputed
 
-```{r echo = T}
-q2$interval[max(q2$average_steps)]
-```
-## Imputing missing values
-1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
-```{r echo = T}
-sum(is.na(assignment$steps))
-```
-2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5 minutes etc.
+# 7. Panel plot comparing the average number of steps taken per 5-minute interval across weekdays and weekends
 
-3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+# 8. All of the R code needed to reproduce the results (numbers, plots, etc.) in the report
 
-```{r echo = F}
-newset <- assignment
-newset$steps[is.na(newset$steps)] <- 0
-```
-4. Make a histogram of the total number of steps taken each day. Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimate from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
-```{r echo = T}
-q3 <- newset %>% group_by(date) %>% summarise(total_steps = sum(steps))
-q3$date <- as.Date.character(q3$date, "%Y-%m-%d")
 
-ggplot(q3,aes(x=date))+geom_bar(aes(y=total_steps), stat = "identity")+labs(x = "Date", y="Total Steps")
+# Assignment
 
-mean(q3$total_steps)
-median(q3$total_steps)
-```
+# This assignment will be described in multiple parts. You will need to write a report that answers the questions detailed below.
 
-## Are there differences in activity patterns between weekdays and weekends?
-1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+# Ultimately, you will need to complete the entire assignment in a single R markdown document that can be processed by knitr and be transformed into an HTML file.
 
-```{r echo = F}
-q4 <- assignment
-```
-2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:
 
-```{r echo = T}
-q4$date <- as.Date.character(q4$date, "%Y-%m-%d")
-q4$day <- format(q4$date, "%A")
-weekend <- c("Saturday", "Sunday")
+# Throughout your report make sure you always include the code that you used to generate the output you present.
 
-for (i in 1:nrow(q4))
-{
-  if (format(q4$date[i], "%A") %in% weekend)
-  {
-    q4$week[i] <- "Weekend"
-  }
-  else
-  {
-    q4$week[i] <- "Weekday"
-  }
-}
+# When writing code chunks in the R markdown document, always use echo=TRUE so that someone else will be able to read the code.
 
-q4$week <- as.factor(q4$week)
-q4 <- q4 %>% group_by(interval,week) %>% mutate (average_steps = mean(steps , na.rm = T))
+# This assignment will be evaluated via peer assessment so it is essential that your peer evaluators be able to review the code for your analysis.
 
-library(lattice)
-xyplot(average_steps ~ interval | week, q4, type = "l", xlab= "Interval", ylab="Average Steps", layout = c(1,2))
-```
+#
+
+# For the plotting aspects of this assignment, feel free to use any plotting system in R (i.e., base, lattice, ggplot2)
+
+#
+
+# Fork/clone the GitHub repository created for this assignment. You will submit this assignment by pushing your completed files into your forked repository on GitHub.
+
+# The assignment submission will consist of the URL to your GitHub repository and the SHA-1 commit ID for your repository state.
+
+#
+
+# NOTE: The GitHub repository also contains the dataset for the assignment so you do not have to download the data separately.
+
+#
+
+# Loading and preprocessing the data
+
+# Show any code that is needed to
+
+#
+
+# Load the data (i.e. read.csv())
+
+# Process/transform the data (if necessary) into a format suitable for your analysis
+
+
+
+##############################################
+
+# What is mean total number of steps taken per day?
+
+# For this part of the assignment, you can ignore the missing values in the dataset.
+
+#
+
+# 1. Calculate the total number of steps taken per day
+
+# 2. If you do not understand the difference between a histogram and a barplot, research the difference between them.
+
+# 3. Make a histogram of the total number of steps taken each day
+
+# 4. Calculate and report the mean and median of the total number of steps taken per day
+
+##############################################
+
+# What is the average daily activity pattern?
+
+# 1. Make a time series plot (i.e. type="l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+# 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+##############################################
+
+# Imputing missing values
+
+# Note that there are a number of days/intervals where there are missing values (NA).
+
+# The presence of missing days may introduce bias into some calculations or summaries of the data.
+
+#
+
+# 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+# 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated.
+
+#    For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+# 3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+# 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
+
+#    Do these values differ from the estimates from the first part of the assignment?
+
+#    What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+##############################################
+
+# Are there differences in activity patterns between weekdays and weekends?
+
+# For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
+
+#
+
+# 1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+# 2. Make a panel plot containing a time series plot (i.e. type="l") of the 5-minute interval (x-axis) and the average number of steps taken,
+
+#    averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
+##############################################
+
+# Submitting the Assignment
+
+# To submit the assignment:
+
+#  
+
+# 1. Commit your completed PA1_template.Rmd file to the master branch of your git repository (you should already be on the master branch unless you created new ones)
+
+# 2. Commit your PA1_template.md and PA1_template.html files produced by processing your R markdown file with knit2html()
+
+#    function in R (from the knitr package) by running the function from the console.
+
+# 3. If your document has figures included (it should) then they should have been placed in the figure/ directory by default (unless you overrided the default).
+
+#    Add and commit the figure/ directory to your git repository so that the figures appear in the markdown file when it displays on github.
+
+# 4. Push your master branch to GitHub.
+
+# 5. Submit the URL to your GitHub repository for this assignment on the course web site.
+
+#
+
+# In addition to submitting the URL for your GitHub repository, you will need to submit the 40 character SHA-1 hash (as string of numbers from 0-9 and letters from a-f)
+
+# that identifies the repository commit that contains the version of the files you want to submit. You can do this in GitHub by doing the following
+
+#
+
+# 1. Going to your GitHub repository web page for this assignment
+
+# 2. Click on the "?? commits" link where ?? is the number of commits you have in the repository.
+
+#    For example, if you made a total of 10 commits to this repository, the link should say "10 commits".
+
+# 3. You will see a list of commits that you have made to this repository. The most recent commit is at the very top.
+
+#    If this represents the version of the files you want to submit, then just click the "copy to clipboard" button on the right hand side that should appear when you hover over the SHA-1 hash.
+
+#    Paste this SHA-1 hash into the course web site when you submit your assignment. If you don't want to use the most recent commit, then go down and find the commit you want and copy the SHA-1 hash.
+
+##############################################
+
+
+
+rm(list=ls(all=TRUE))
+
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+
+orig.file = read.csv("C:/Users/Ivy/Documents/Coursea/Data Science/Course 5 Reproducible Research/Week2/Assignment/activity.csv", 
+                     sep = ',', header = T, row.names=NULL, stringsAsFactors=F)
+
+######################################################
+
+# What is mean total number of steps taken per day?
+
+######################################################
+
+# 1. Calculate the total number of steps taken per day
+
+total_steps_per_day <- orig.file %>% 
+  group_by(date) %>% 
+  summarise(total_steps_per_day2 = sum(steps)) 
+
+
+# 3. Make a histogram of the total number of steps taken each day
+hist(total_steps_per_day$total_steps_per_day2)
+
+
+
+# 4. Calculate and report the mean and median of the total number of steps taken per day
+
+mean(total_steps_per_day$total_steps_per_day2, na.rm = T)
+
+median(total_steps_per_day$total_steps_per_day2, na.rm = T)
+
+
+
+######################################################
+
+# What is the average daily activity pattern?
+
+######################################################
+
+
+
+# 1. Make a time series plot (i.e. type="l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+orig.file$date <- ymd(orig.file$date)
+
+total_steps_per_day2 <- orig.file %>% mutate(Time = hms::as.hms(orig.file$interval))
+
+total_steps_per_day2 <- tidyr::unite_(total_steps_per_day2, "All",c("date","Time"), sep = " ", remove = F)
+
+total_steps_per_day2$All <- ymd_hms(total_steps_per_day2$All)
+
+c <- ggplot(total_steps_per_day2, aes(x=All,y=steps))
+
+c + geom_line(type="l")
+
+
+
+# 2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+total_steps_per_day2$All[which.max(total_steps_per_day2$steps)]
+
+
+
+######################################################
+
+# Imputing missing values
+
+######################################################
+
+
+
+# 1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+sum(is.na(total_steps_per_day2)) 
+
+# 2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated.
+
+#    For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
+
+total_steps_per_day_nan <- total_steps_per_day2
+
+total_steps_per_day_nan$steps[is.na(total_steps_per_day_nan$steps)] <- 0
+
+
+
+# 4. Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day.
+
+#    Do these values differ from the estimates from the first part of the assignment?
+
+#    Answer: Yes
+
+
+
+#    What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+#    Answer: The value of mean and median total number of steps taken per day has decreased and the value of mean and median are different after imputing missing data.
+
+
+total_steps_per_day_nan2 <- total_steps_per_day_nan %>% group_by(date) %>% summarise(total_steps_per_day2 = sum(steps))
+
+hist(total_steps_per_day_nan2$total_steps_per_day2)
+
+
+mean(total_steps_per_day_nan2$total_steps_per_day2)
+
+median(total_steps_per_day_nan2$total_steps_per_day2)
+
+
+
+################################################################################
+
+# Are there differences in activity patterns between weekdays and weekends?
+
+################################################################################
+
+# 1. Create a new factor variable in the dataset with two levels - "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+total_steps_per_day2$average_steps_per_day[is.na(total_steps_per_day2$average_steps_per_day)] <- 0
+
+total_steps_per_day3 <- total_steps_per_day2 %>%  mutate(Day = weekdays(as.Date(date)),
+                                                         weekdays = case_when(Day == "Monday" ~ "Weekday",
+                                                                              Day == "Tuesday" ~ "Weekday",
+                                                                              Day == "Wednesday" ~ "Weekday",
+                                                                              Day == "Thursday" ~ "Weekday",
+                                                                              Day == "Friday" ~ "Weekday",
+                                                                              Day == "Saturday" ~ "Weekend",
+                                                                              Day == "Sunday" ~ "Weekend"))
+
+
+# 2. Make a panel plot containing a time series plot (i.e. type="l") of the 5-minute interval (x-axis) and the average number of steps taken,
+
+#    averaged across all weekday days or weekend days (y-axis). See the README file in the GitHub repository to see an example of what this plot should look like using simulated data.
+
+
+total_steps_per_day4 <- orig.file
+
+total_steps_per_day2$average_steps_per_day[is.na(total_steps_per_day2$average_steps_per_day)] <- 0
+
+weeksplot + facet_wrap(~ weekdays, ncol =1)
