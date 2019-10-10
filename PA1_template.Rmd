@@ -1,0 +1,135 @@
+---
+title: "Peer Assignment 1"
+author: "Ivy Li"
+date: "October 3, 2019"
+output:
+ html_document
+---
+
+
+```{r}
+library(dplyr)
+library(readxl)
+library(reshape2)
+library(xlsx)
+library(ggplot2)
+library(lubridate)
+```
+
+## Loading and preprocessing the data
+
+```{r}
+assignment <- read.csv("C:/Users/Ivy/Documents/Coursea/Data Science/Course 5 Reproducible Research/Week2/Assignment/activity.csv")
+```
+
+## What is mean total number of steps taken per day?
+For this part of the assignment, you can ignore the missing values in the dataset.
+
+```{r}
+total_steps_per_day <- assignment %>% 
+  group_by(date) %>% 
+  summarise(total_steps_per_day2 = sum(steps)) 
+```
+
+Make a histogram of the total number of steps taken each day
+
+```{r echo = T}
+jpeg("plot1.jpg",width =1050, height = 350)
+
+hist(total_steps_per_day$total_steps_per_day2)
+dev.off()
+```
+
+Calculate and report the mean and median total number of steps taken per day
+```{r echo = T}
+mean(total_steps_per_day$total_steps_per_day2, na.rm = T)
+median(total_steps_per_day$total_steps_per_day2, na.rm = T)
+```
+
+## What is the average daily activity pattern?
+```{r echo = F}
+assignment$date <- ymd(assignment$date)
+
+total_steps_per_day2 <- assignment %>% mutate(Time = hms::as.hms(assignment$interval))
+
+total_steps_per_day2 <- tidyr::unite_(total_steps_per_day2, "All",c("date","Time"), sep = " ", remove = F)
+
+total_steps_per_day2$All <- ymd_hms(total_steps_per_day2$All)
+
+```
+1. Make a time sersies plot of the 5 minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
+
+```{r echo = T}
+jpeg("plot2.jpg",width = 1050, height = 350)
+ggplot(total_steps_per_day2, aes(x=All,y=steps)) +geom_line(type="l")
+dev.off()
+```
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r echo = T}
+total_steps_per_day2$All[which.max(total_steps_per_day2$steps)]
+```
+## Imputing missing values
+1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+```{r echo = T}
+sum(is.na(total_steps_per_day2)) 
+```
+2. Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5 minutes etc.
+```{r}
+total_steps_per_day_nan <- total_steps_per_day2
+
+```
+3. Create a new dataset that is equal to the original dataset but with the missing data filled in.
+
+```{r echo = F}
+newset <- assignment
+newset$steps[is.na(newset$steps)] <- 0
+```
+4. Make a histogram of the total number of steps taken each day. Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimate from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
+
+```{r echo = T}
+total_steps_per_day_nan2 <- total_steps_per_day_nan %>% group_by(date) %>% summarise(total_steps_per_day2 = sum(steps))
+
+jpeg("plot3.jpg",width = 1050, height = 350)
+hist(total_steps_per_day_nan2$total_steps_per_day2)
+dev.off()
+
+mean(total_steps_per_day_nan2$total_steps_per_day2)
+
+median(total_steps_per_day_nan2$total_steps_per_day2)
+
+```
+
+## Are there differences in activity patterns between weekdays and weekends?
+1. Create a new factor variable in the dataset with two levels -- "weekday" and "weekend" indicating whether a given date is a weekday or weekend day.
+
+```{r echo = F}
+q4 <- assignment
+```
+2. Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all weekday days or weekend days (y-axis). The plot should look something like the following, which was created using simulated data:
+
+```{r echo = T}
+q4$date <- as.Date.character(q4$date, "%Y-%m-%d")
+q4$day <- format(q4$date, "%A")
+weekend <- c("Saturday", "Sunday")
+
+for (i in 1:nrow(q4))
+{
+  if (format(q4$date[i], "%A") %in% weekend)
+  {
+    q4$week[i] <- "Weekend"
+  }
+  else
+  {
+    q4$week[i] <- "Weekday"
+  }
+}
+
+q4$week <- as.factor(q4$week)
+q4 <- q4 %>% group_by(interval,week) %>% mutate (average_steps = mean(steps , na.rm = T))
+
+jpeg("plot4.jpg",width = 1050, height = 350)
+library(lattice)
+xyplot(average_steps ~ interval | week, q4, type = "l", xlab= "Interval", ylab="Average Steps", layout = c(1,2))
+dev.off()
+```
